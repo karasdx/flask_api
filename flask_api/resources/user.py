@@ -15,11 +15,11 @@ class User(Resource):
                     required=True,
                     help="Every user needs a password."
                     )
-    parser.add_argument('create_at',
+    parser.add_argument('created_at',
                         type=time,
                         required=False,
                         )
-    parser.add_argument('update_at',
+    parser.add_argument('updated_at',
                         type=time,
                         required=False,
                         )
@@ -71,3 +71,18 @@ class User(Resource):
 class UserList(Resource):
     def get(self):
         return {'users': list(map(lambda x: x.json(), UserModel.query.all()))}
+
+    def post(self):
+        if UserModel.find_by_name(name):
+            return {'message': "An user with name '{}' already exists.".format(name)}, 400
+
+        data = User.parser.parse_args()
+
+        user = UserModel(name, **data)
+
+        try:
+            user.save_to_db()
+        except:
+            return {"message": "An error occurred inserting the item."}, 500
+
+        return user.json(), 201

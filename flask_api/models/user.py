@@ -1,5 +1,5 @@
 from db import db
-
+from datetime import datetime
 
 class UserModel(db.Model):
     __tablename__ = 'users'
@@ -8,8 +8,8 @@ class UserModel(db.Model):
     name = db.Column(db.String(80))
     email = db.Column(db.String(100))
     password = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime())
-    updated_at = db.Column(db.DateTime())
+    created_at = db.Column(db.DateTime(), default=datetime.now)
+    updated_at = db.Column(db.DateTime(), default=datetime.now, onupdate=datetime.now)
 
     def __init__(self, name, email, password, created_at, updated_at):
         self.name = name
@@ -19,7 +19,7 @@ class UserModel(db.Model):
         self.updated_at = updated_at
 
     def json(self):
-        return {'name': self.name, 'email': self.email, 'password': self.password, 'created_at': self.created_at, 'updated_at': self.updated_at}
+        return {'name': self.name, 'email': self.email, 'password': self.password}
 
     @classmethod
     def find_by_name(cls, name):
